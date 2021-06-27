@@ -1,4 +1,4 @@
-module todoapp
+module github.com/baza04/todoApp
 
 go 1.16
 
