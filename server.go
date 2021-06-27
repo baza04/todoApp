@@ -4,15 +4,13 @@ import (
 	"context"
 	"net/http"
 	"time"
-
-	"github.com/baza04/todoApp/pkg/handler"
 )
 
 type Server struct {
 	httpServer *http.Server
 }
 
-func (s *Server) Run(port string, handler handler.Handler) error {
+func (s *Server) Run(port string, handler http.Handler) error {
 	s.httpServer = &http.Server{
 		Addr:           ":" + port,
 		Handler:        handler,
