@@ -17,6 +17,4 @@ migrate-up:
 
 migrate-down:
 	migrate -path ./schema -database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' down
-
-run-server:
-	go run cmd/web/main.go
+	

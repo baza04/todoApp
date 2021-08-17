@@ -5,7 +5,6 @@ import (
 
 	todoapp "github.com/baza04/todoApp"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) signUp(c *gin.Context) {
@@ -33,7 +32,6 @@ type signInInput struct {
 
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
-	logrus.Println("Sign In handler")
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())

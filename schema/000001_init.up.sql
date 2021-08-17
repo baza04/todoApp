@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TABLE users
 (
     id            serial       not null unique,
@@ -34,3 +36,5 @@ CREATE TABLE lists_items
     item_id int references todo_items (id) on delete cascade not null,
     list_id int references todo_lists (id) on delete cascade not null
 );
+
+COMMIT;
