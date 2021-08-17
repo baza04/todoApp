@@ -1,6 +1,6 @@
 # todoApp on Golang
 
-## Run
+## Run app
 ```bash
 make run
 ```
