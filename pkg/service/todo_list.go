@@ -17,10 +17,21 @@ func (s *TodoListService) Create(userId int, list todoapp.TodoList) (int, error)
 	return s.repo.Create(userId, list)
 }
 
-func (s *TodoListService) GetAllLists(userId int) ([]todoapp.TodoList, error) {
-	return s.repo.GetAllLists(userId)
+func (s *TodoListService) GetAll(userId int) ([]todoapp.TodoList, error) {
+	return s.repo.GetAll(userId)
 }
 
-func (s *TodoListService) GetListById(userId, id int) (todoapp.TodoList, error) {
-	return s.repo.GetListById(userId, id)
+func (s *TodoListService) GetById(userId, id int) (todoapp.TodoList, error) {
+	return s.repo.GetById(userId, id)
+}
+
+func (s *TodoListService) Update(userId, id int, input *todoapp.UpdateListInput) error {
+	if err := input.Validate(); err != nil {
+		return err
+	}
+	return s.repo.Update(userId, id, input)
+}
+
+func (s *TodoListService) Delete(userId, id int) error {
+	return s.repo.Delete(userId, id)
 }
