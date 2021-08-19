@@ -4,10 +4,13 @@ run:
 	go run ./cmd/web/main.go
 
 run-postgres:
-	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d --rm postgres
+	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
 
 restart-postgres:
 	docker restart todo-db
+
+postgres-cli:
+	docker exec -it todo-db /bin/bash
 
 create-new-migration:
 	migrate create -ext sql -dir ./schema -seq init

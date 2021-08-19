@@ -41,7 +41,7 @@ func (h *Handler) getAllList(c *gin.Context) {
 		return
 	}
 
-	lists, err := h.services.TodoList.GetAllLists(userId)
+	lists, err := h.services.TodoList.GetAll(userId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -55,7 +55,6 @@ func (h *Handler) getAllList(c *gin.Context) {
 func (h *Handler) getListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -65,7 +64,7 @@ func (h *Handler) getListById(c *gin.Context) {
 		return
 	}
 
-	list, err := h.services.TodoList.GetListById(userId, id)
+	list, err := h.services.TodoList.GetById(userId, id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -74,6 +73,51 @@ func (h *Handler) getListById(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) updateList(c *gin.Context) {}
+func (h *Handler) updateList(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
 
-func (h *Handler) deleteList(c *gin.Context) {}
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var input todoapp.UpdateListInput
+	if err = c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err = h.services.TodoList.Update(userId, id, &input); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
+}
+
+func (h *Handler) deleteList(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.TodoList.Delete(userId, id); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
+}
