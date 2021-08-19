@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	todoapp "github.com/baza04/todoApp"
@@ -28,18 +27,13 @@ func (r *TodoListPostgres) Create(userId int, list todoapp.TodoList) (int, error
 	createListQuery := fmt.Sprintf("INSERT INTO %s (title, description) VALUES ($1, $2) RETURNING id", todoListsTable)
 
 	row := tx.QueryRow(createListQuery, list.Title, list.Description)
-	if err := row.Scan(&id); err != nil {
+	if err = row.Scan(&id); err != nil {
 		tx.Rollback()
 		return 0, err
 	}
-	tx.Commit()
-
-	tx, _ = r.db.Begin()
 
 	createUsersListsQuery := fmt.Sprintf("INSERT INTO %s (user_id, list_id) VALUES ($1, $2)", usersListsTable)
-	log.Println(userId, id)
-	_, err = r.db.Exec(createUsersListsQuery, userId, id)
-	if err != nil {
+	if _, err = tx.Exec(createUsersListsQuery, userId, id); err != nil {
 		tx.Rollback()
 		return 0, err
 	}
@@ -83,7 +77,7 @@ func (r TodoListPostgres) Update(userId, listId int, input *todoapp.UpdateListIn
 	query := fmt.Sprintf("UPDATE %s tl SET %s FROM %s ul WHERE tl.id = ul.list_id AND ul.list_id = $%d AND ul.user_id = $%d", todoListsTable, setQuery, usersListsTable, argId, argId+1)
 	args = append(args, listId, userId)
 
-	logrus.Debugf("updateQuery %s", query)
+	logrus.Debugf("listUpdateQuery %s\n", query)
 	logrus.Debug("args: %s", args)
 
 	_, err := r.db.Exec(query, args...)
