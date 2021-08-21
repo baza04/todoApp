@@ -15,6 +15,19 @@ definitions:
     - password
     - username
     type: object
+  todoapp.TodoItem:
+    properties:
+      description:
+        type: string
+      done:
+        type: boolean
+      id:
+        type: integer
+      title:
+        type: string
+    required:
+    - title
+    type: object
   todoapp.TodoList:
     properties:
       description:
@@ -25,6 +38,15 @@ definitions:
         type: string
     required:
     - title
+    type: object
+  todoapp.UpdateItemInput:
+    properties:
+      description:
+        type: string
+      done:
+        type: boolean
+      title:
+        type: string
     type: object
   todoapp.User:
     properties:
@@ -46,6 +68,107 @@ info:
   title: Todo App API
   version: "1.0"
 paths:
+  /api/items/:id:
+    delete:
+      description: delete item by ID of current user
+      operationId: delete-todo-item
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - apiKeyAuth: []
+      summary: Delete TODO Items By ID
+      tags:
+      - items
+    get:
+      description: return item by ID of current user
+      operationId: get-todo-item-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/todoapp.TodoItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - apiKeyAuth: []
+      summary: Get TODO Items By ID
+      tags:
+      - items
+    put:
+      description: update item by ID of current user
+      operationId: update-todo-item
+      parameters:
+      - description: updated item info
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/todoapp.UpdateItemInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - apiKeyAuth: []
+      summary: Update TODO Items By ID
+      tags:
+      - items
   /api/lists:
     post:
       consumes:
@@ -183,6 +306,76 @@ paths:
       summary: Update TODO List
       tags:
       - lists
+  /api/lists/:id/items:
+    get:
+      description: return all items from choosen list of current user
+      operationId: get-all-todo-items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - apiKeyAuth: []
+      summary: Get All TODO Items
+      tags:
+      - items
+    post:
+      description: will create new item in list of current user
+      operationId: create-todo-item
+      parameters:
+      - description: item info
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/todoapp.TodoItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: id
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - apiKeyAuth: []
+      summary: Create TODO Item
+      tags:
+      - items
   /auth/sign-in:
     post:
       consumes:
@@ -212,6 +405,10 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Sign In (Authentication)
@@ -246,6 +443,10 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Sign Up (Registration)
