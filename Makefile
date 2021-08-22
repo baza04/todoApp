@@ -9,6 +9,9 @@ run-postgres:
 restart-postgres:
 	docker restart todo-db
 
+stop-postgres:
+	docker stop todo-db
+
 postgres-cli:
 	docker exec -it todo-db /bin/bash
 
@@ -20,4 +23,6 @@ migrate-up:
 
 migrate-down:
 	migrate -path ./schema -database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' down
-	
+
+init-swagger:
+	swag -g cmd/web/main.go
