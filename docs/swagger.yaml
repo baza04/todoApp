@@ -5,6 +5,13 @@ definitions:
       message:
         type: string
     type: object
+  handler.getAllItemsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/todoapp.TodoItem'
+        type: array
+    type: object
   handler.signInInput:
     properties:
       password:
@@ -316,7 +323,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: object
+            $ref: '#/definitions/handler.getAllItemsResponse'
         "400":
           description: Bad Request
           schema:

@@ -62,7 +62,7 @@ type getAllItemsResponse struct {
 // @Tags items
 // @Accepted json
 // @Produce json
-// @Success 200 {object} object handler.getAllItemsResponse
+// @Success 200 {object} handler.getAllItemsResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
