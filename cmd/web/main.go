@@ -39,9 +39,8 @@ func main() {
 		logrus.Errorf("error loading env variables: %s", err.Error())
 	}
 
-	if "" == os.Getenv("DB_PASSWORD") {
+	if _, ok := os.LookupEnv("DB_PASSWORD"); !ok {
 		logrus.Fatalf("error cannot initializing database password")
-
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
