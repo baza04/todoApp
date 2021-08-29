@@ -20,5 +20,9 @@
 # trash
 .idea
 
+# db
+.database
+
+.DB_STORE
 trash/
 note.txt
