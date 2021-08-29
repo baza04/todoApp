@@ -23,6 +23,6 @@
 # db
 .database
 
-.DB_STORE
+.DS_STORE
 trash/
 note.txt
