@@ -39,7 +39,7 @@ func main() {
 		logrus.Errorf("error loading env variables: %s", err.Error())
 	}
 
-	if _, ok := os.LookupEnv("DB_PASSWORD"); !ok {
+	if value, ok := os.LookupEnv("DB_PASSWORD"); !ok || value == "" {
 		logrus.Fatalf("error cannot initializing database password")
 	}
 
