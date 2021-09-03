@@ -17,31 +17,31 @@ func NewTodoItemService(repo repository.TodoItem, listRepo repository.TodoList) 
 	}
 }
 
-func (s *TodoItemService) Create(userId, listId int, input todoapp.TodoItem) (int, error) {
-	_, err := s.listRepo.GetById(userId, listId)
+func (s *TodoItemService) Create(userID, listID int, input todoapp.TodoItem) (int, error) {
+	_, err := s.listRepo.GetByID(userID, listID)
 	if err != nil { // list doesn't exist or not belong to user
 		return 0, nil
 	}
 
-	return s.repo.Create(userId, listId, input)
+	return s.repo.Create(userID, listID, input)
 }
 
-func (s *TodoItemService) GetAll(userId, listId int) ([]todoapp.TodoItem, error) {
-	return s.repo.GetAll(userId, listId)
+func (s *TodoItemService) GetAll(userID, listID int) ([]todoapp.TodoItem, error) {
+	return s.repo.GetAll(userID, listID)
 }
 
-func (s *TodoItemService) GetById(userId, itemId int) (todoapp.TodoItem, error) {
-	return s.repo.GetById(userId, itemId)
+func (s *TodoItemService) GetByID(userID, itemID int) (todoapp.TodoItem, error) {
+	return s.repo.GetByID(userID, itemID)
 }
 
-func (s *TodoItemService) Update(userId, itemId int, input todoapp.UpdateItemInput) error {
+func (s *TodoItemService) Update(userID, itemID int, input todoapp.UpdateItemInput) error {
 	if err := input.Validate(); err != nil {
 		return err
 	}
 
-	return s.repo.Update(userId, itemId, input)
+	return s.repo.Update(userID, itemID, input)
 }
 
-func (s *TodoItemService) Delete(userId, itemId int) error {
-	return s.repo.Delete(userId, itemId)
+func (s *TodoItemService) Delete(userID, itemID int) error {
+	return s.repo.Delete(userID, itemID)
 }

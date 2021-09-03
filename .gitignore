@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+*bin
 
 # Test binary, built with `go test -c`
 *.test
@@ -20,5 +21,9 @@
 # trash
 .idea
 
+# db
+.database
+
+.DS_STORE
 trash/
 note.txt

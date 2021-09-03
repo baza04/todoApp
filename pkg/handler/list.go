@@ -16,13 +16,13 @@ import (
 // @Accept json
 // @Produce json
 // @Param payload body todoapp.TodoList true "list info"
-// @Success 200 {integer} integer 1
+// @Success 201 {integer} integer 1
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/lists [post]
 func (h *Handler) createList(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
@@ -33,15 +33,19 @@ func (h *Handler) createList(c *gin.Context) {
 		return
 	}
 
-	listId, err := h.services.TodoList.Create(userId, input)
+	listID, err := h.services.TodoList.Create(userID, input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusCreated, map[string]interface{}{
-		"list_id": listId,
+		"list_id": listID,
 	})
+}
+
+type getAllListsResponse struct {
+	Data []todoapp.TodoList `json:"data"`
 }
 
 // @Summary Get All TODO Lists
@@ -56,17 +60,13 @@ func (h *Handler) createList(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/lists [get]
-type getAllListsResponse struct {
-	Data []todoapp.TodoList `json:"data"`
-}
-
 func (h *Handler) getAllList(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 
-	lists, err := h.services.TodoList.GetAll(userId)
+	lists, err := h.services.TodoList.GetAll(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -78,19 +78,20 @@ func (h *Handler) getAllList(c *gin.Context) {
 }
 
 // @Summary Get TODO List By ID
-// @Security apiKeyAuth
+// @Security ApiKeyAuth
 // @Description Get TODO List By choosen ID
 // @ID get-list-by-id
 // @Tags lists
 // @Accepted json
 // @Produce json
+// @Param list_id path int true "list_id"
 // @Success 200 {object} todoapp.TodoList
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} handler.errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/lists/:id [get]
-func (h *Handler) getListById(c *gin.Context) {
-	userId, err := getUserId(c)
+// @Router /api/lists/{list_id} [get]
+func (h *Handler) getListByID(c *gin.Context) {
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
@@ -101,7 +102,7 @@ func (h *Handler) getListById(c *gin.Context) {
 		return
 	}
 
-	list, err := h.services.TodoList.GetById(userId, id)
+	list, err := h.services.TodoList.GetByID(userID, id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -117,13 +118,15 @@ func (h *Handler) getListById(c *gin.Context) {
 // @ID update-list
 // @Accept json
 // @Produce json
+// @Param payload body todoapp.UpdateListInput true "update_info"
+// @Param list_id path int true "list_id"
 // @Success 200 {string} string "status"
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} handler.errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/lists/:id [put]
+// @Router /api/lists/{list_id} [put]
 func (h *Handler) updateList(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
@@ -140,7 +143,7 @@ func (h *Handler) updateList(c *gin.Context) {
 		return
 	}
 
-	if err = h.services.TodoList.Update(userId, id, &input); err != nil {
+	if err = h.services.TodoList.Update(userID, id, &input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -151,19 +154,20 @@ func (h *Handler) updateList(c *gin.Context) {
 }
 
 // @Summary Delete TODO List
-// @Security apiKeyAuth
+// @Security ApiKeyAuth
 // @Description Delete TODO List
 // @ID delete-todo-list
 // @Tags lists
 // @Accepted json
 // @Produce json
+// @Param list_id path int true "list_id"
 // @Success 200 {string} string "status"
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/lists/:id [delete]
+// @Router /api/lists/{list_id} [delete]
 func (h *Handler) deleteList(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
@@ -174,7 +178,7 @@ func (h *Handler) deleteList(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.TodoList.Delete(userId, id); err != nil {
+	if err := h.services.TodoList.Delete(userID, id); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 

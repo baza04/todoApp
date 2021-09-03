@@ -12,6 +12,13 @@ definitions:
           $ref: '#/definitions/todoapp.TodoItem'
         type: array
     type: object
+  handler.getAllListsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/todoapp.TodoList'
+        type: array
+    type: object
   handler.signInInput:
     properties:
       password:
@@ -55,6 +62,13 @@ definitions:
       title:
         type: string
     type: object
+  todoapp.UpdateListInput:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
   todoapp.User:
     properties:
       name:
@@ -75,10 +89,16 @@ info:
   title: Todo App API
   version: "1.0"
 paths:
-  /api/items/:id:
+  /api/items/{id}:
     delete:
       description: delete item by ID of current user
       operationId: delete-todo-item
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -103,13 +123,19 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - apiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Delete TODO Items By ID
       tags:
       - items
     get:
       description: return item by ID of current user
       operationId: get-todo-item-by-id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -134,7 +160,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - apiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Get TODO Items By ID
       tags:
       - items
@@ -148,6 +174,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/todoapp.UpdateItemInput'
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -172,11 +203,42 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - apiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Update TODO Items By ID
       tags:
       - items
   /api/lists:
+    get:
+      description: return all TODO lists of current user
+      operationId: get-all-lists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.getAllListsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All TODO Lists
+      tags:
+      - lists
     post:
       consumes:
       - application/json
@@ -192,8 +254,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             type: integer
         "400":
@@ -217,10 +279,60 @@ paths:
       summary: Create TODO List
       tags:
       - lists
-  /api/lists/:id:
+  /api/lists/{id}/items:
+    post:
+      description: will create new item in list of current user
+      operationId: create-todo-item
+      parameters:
+      - description: item info
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/todoapp.TodoItem'
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: id
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create TODO Item
+      tags:
+      - items
+  /api/lists/{list_id}:
     delete:
       description: Delete TODO List
       operationId: delete-todo-list
+      parameters:
+      - description: list_id
+        in: path
+        name: list_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -245,13 +357,19 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - apiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Delete TODO List
       tags:
       - lists
     get:
       description: Get TODO List By choosen ID
       operationId: get-list-by-id
+      parameters:
+      - description: list_id
+        in: path
+        name: list_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -276,7 +394,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - apiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Get TODO List By ID
       tags:
       - lists
@@ -285,6 +403,18 @@ paths:
       - application/json
       description: Update choosen list info
       operationId: update-list
+      parameters:
+      - description: update_info
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/todoapp.UpdateListInput'
+      - description: list_id
+        in: path
+        name: list_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -313,10 +443,16 @@ paths:
       summary: Update TODO List
       tags:
       - lists
-  /api/lists/:id/items:
+  /api/lists/{list_id}/items:
     get:
       description: return all items from choosen list of current user
       operationId: get-all-todo-items
+      parameters:
+      - description: list_id
+        in: path
+        name: list_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -341,46 +477,8 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - apiKeyAuth: []
+      - ApiKeyAuth: []
       summary: Get All TODO Items
-      tags:
-      - items
-    post:
-      description: will create new item in list of current user
-      operationId: create-todo-item
-      parameters:
-      - description: item info
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/todoapp.TodoItem'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: id
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handler.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handler.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/handler.errorResponse'
-      security:
-      - apiKeyAuth: []
-      summary: Create TODO Item
       tags:
       - items
   /auth/sign-in:
@@ -399,7 +497,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: token
+          description: someToken
           schema:
             type: string
         "400":

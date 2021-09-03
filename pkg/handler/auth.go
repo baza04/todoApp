@@ -47,7 +47,7 @@ type signInInput struct {
 // @Accept json
 // @Produce json
 // @Param payload body signInInput true "username password"
-// @Success 200 {string} string "token"
+// @Success 200 {string} string token "someToken"
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
