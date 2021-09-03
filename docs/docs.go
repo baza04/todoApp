@@ -23,11 +23,11 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/items/:id": {
+        "/api/items/{id}": {
             "get": {
                 "security": [
                     {
-                        "apiKeyAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "return item by ID of current user",
@@ -39,6 +39,15 @@ var doc = `{
                 ],
                 "summary": "Get TODO Items By ID",
                 "operationId": "get-todo-item-by-id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -75,7 +84,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "apiKeyAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "update item by ID of current user",
@@ -96,6 +105,13 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/todoapp.UpdateItemInput"
                         }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -134,7 +150,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "apiKeyAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "delete item by ID of current user",
@@ -146,6 +162,15 @@ var doc = `{
                 ],
                 "summary": "Delete TODO Items By ID",
                 "operationId": "delete-todo-item",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "status",
@@ -181,6 +206,54 @@ var doc = `{
             }
         },
         "/api/lists": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "return all TODO lists of current user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lists"
+                ],
+                "summary": "Get All TODO Lists",
+                "operationId": "get-all-lists",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.getAllListsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -211,8 +284,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "integer"
                         }
@@ -244,11 +317,79 @@ var doc = `{
                 }
             }
         },
-        "/api/lists/:id": {
+        "/api/lists/{id}/items": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "will create new item in list of current user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "items"
+                ],
+                "summary": "Create TODO Item",
+                "operationId": "create-todo-item",
+                "parameters": [
+                    {
+                        "description": "item info",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/todoapp.TodoItem"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/lists/{list_id}": {
             "get": {
                 "security": [
                     {
-                        "apiKeyAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Get TODO List By choosen ID",
@@ -260,6 +401,15 @@ var doc = `{
                 ],
                 "summary": "Get TODO List By ID",
                 "operationId": "get-list-by-id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "list_id",
+                        "name": "list_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -311,6 +461,24 @@ var doc = `{
                 ],
                 "summary": "Update TODO List",
                 "operationId": "update-list",
+                "parameters": [
+                    {
+                        "description": "update_info",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/todoapp.UpdateListInput"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "list_id",
+                        "name": "list_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "status",
@@ -347,7 +515,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "apiKeyAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Delete TODO List",
@@ -359,6 +527,15 @@ var doc = `{
                 ],
                 "summary": "Delete TODO List",
                 "operationId": "delete-todo-list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "list_id",
+                        "name": "list_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "status",
@@ -393,11 +570,11 @@ var doc = `{
                 }
             }
         },
-        "/api/lists/:id/items": {
+        "/api/lists/{list_id}/items": {
             "get": {
                 "security": [
                     {
-                        "apiKeyAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "return all items from choosen list of current user",
@@ -409,70 +586,20 @@ var doc = `{
                 ],
                 "summary": "Get All TODO Items",
                 "operationId": "get-all-todo-items",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "list_id",
+                        "name": "list_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handler.getAllItemsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "apiKeyAuth": []
-                    }
-                ],
-                "description": "will create new item in list of current user",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "items"
-                ],
-                "summary": "Create TODO Item",
-                "operationId": "create-todo-item",
-                "parameters": [
-                    {
-                        "description": "item info",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/todoapp.TodoItem"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "id",
-                        "schema": {
-                            "type": "string"
                         }
                     },
                     "400": {
@@ -528,7 +655,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "token",
+                        "description": "someToken",
                         "schema": {
                             "type": "string"
                         }
@@ -639,6 +766,17 @@ var doc = `{
                 }
             }
         },
+        "handler.getAllListsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/todoapp.TodoList"
+                    }
+                }
+            }
+        },
         "handler.signInInput": {
             "type": "object",
             "required": [
@@ -699,6 +837,17 @@ var doc = `{
                 },
                 "done": {
                     "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "todoapp.UpdateListInput": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
