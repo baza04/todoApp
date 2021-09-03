@@ -23,12 +23,12 @@ import (
 // @Failure default {object} errorResponse
 // @Router /api/lists/{id}/items [post]
 func (h *Handler) createItem(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 
-	listId, err := strconv.Atoi(c.Param("id"))
+	listID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -40,7 +40,7 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.TodoItem.Create(userId, listId, input)
+	id, err := h.services.TodoItem.Create(userID, listID, input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -70,18 +70,18 @@ type getAllItemsResponse struct {
 // @Failure default {object} errorResponse
 // @Router /api/lists/{list_id}/items [get]
 func (h *Handler) getAllItem(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 
-	listId, err := strconv.Atoi(c.Param("id"))
+	listID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	items, err := h.services.TodoItem.GetAll(userId, listId)
+	items, err := h.services.TodoItem.GetAll(userID, listID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -105,19 +105,19 @@ func (h *Handler) getAllItem(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/items/{id} [get]
-func (h *Handler) getItemById(c *gin.Context) {
-	userId, err := getUserId(c)
+func (h *Handler) getItemByID(c *gin.Context) {
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 
-	itemId, err := strconv.Atoi(c.Param("id"))
+	itemID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	item, err := h.services.TodoItem.GetById(userId, itemId)
+	item, err := h.services.TodoItem.GetByID(userID, itemID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -141,12 +141,12 @@ func (h *Handler) getItemById(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /api/items/{id} [put]
 func (h *Handler) updateItem(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 
-	itemId, err := strconv.Atoi(c.Param("id"))
+	itemID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -158,7 +158,7 @@ func (h *Handler) updateItem(c *gin.Context) {
 		return
 	}
 
-	if err = h.services.TodoItem.Update(userId, itemId, input); err != nil {
+	if err = h.services.TodoItem.Update(userID, itemID, input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -182,18 +182,18 @@ func (h *Handler) updateItem(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /api/items/{id} [delete]
 func (h *Handler) deleteItem(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 
-	itemId, err := strconv.Atoi(c.Param("id"))
+	itemID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err = h.services.TodoItem.Delete(userId, itemId); err != nil {
+	if err = h.services.TodoItem.Delete(userID, itemID); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

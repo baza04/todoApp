@@ -1,19 +1,19 @@
 .SILENT:
 
 run:
-	go run ./cmd/web/main.go
+	docker-compose up --remove-orphans --build app
 
-run-postgres:
-	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
+# run-postgres:
+# 	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
 
-restart-postgres:
-	docker restart todo-db
+# restart-postgres:
+# 	docker restart todo-db
 
-stop-postgres:
-	docker stop todo-db
+# stop-postgres:
+# 	docker stop todo-db
 
-postgres-cli:
-	docker exec -it todo-db /bin/bash
+# postgres-cli:
+# 	docker exec -it todo-db /bin/bash
 
 create-new-migration:
 	migrate create -ext sql -dir ./schema -seq init
@@ -25,4 +25,29 @@ migrate-down:
 	migrate -path ./schema -database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' down
 
 init-swagger:
-	swag -g cmd/web/main.go
+	swag init -g cmd/web/main.go
+
+test:
+	go test ./...
+
+test-coverage:
+	go test -cover
+
+# build:
+# 	go build -o ./bin/app ./cmd/web/main.go
+# run: build
+# 	./bin/app
+# pkgs = $(shell go list ./... | fgrep -v /vendor)
+
+# lint:
+# 	go get golang.org/x/lint/golint
+# 	go get honnef.co/go/tools/cmd/staticcheck
+# 	go get github.com/kisielk/errcheck
+
+# 	golint $(pkgs)
+# 	go vet $(pkgs)
+# 	staticcheck $(pkgs)
+# 	errcheck $(pkgs)
+
+gci-lint:
+	golangci-lint run --disable-all -E golint,govet,staticcheck,errcheck

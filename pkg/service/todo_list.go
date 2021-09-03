@@ -13,25 +13,25 @@ func NewTodoListService(repo repository.TodoList) *TodoListService {
 	return &TodoListService{repo: repo}
 }
 
-func (s *TodoListService) Create(userId int, list todoapp.TodoList) (int, error) {
-	return s.repo.Create(userId, list)
+func (s *TodoListService) Create(userID int, list todoapp.TodoList) (int, error) {
+	return s.repo.Create(userID, list)
 }
 
-func (s *TodoListService) GetAll(userId int) ([]todoapp.TodoList, error) {
-	return s.repo.GetAll(userId)
+func (s *TodoListService) GetAll(userID int) ([]todoapp.TodoList, error) {
+	return s.repo.GetAll(userID)
 }
 
-func (s *TodoListService) GetById(userId, id int) (todoapp.TodoList, error) {
-	return s.repo.GetById(userId, id)
+func (s *TodoListService) GetByID(userID, id int) (todoapp.TodoList, error) {
+	return s.repo.GetByID(userID, id)
 }
 
-func (s *TodoListService) Update(userId, id int, input *todoapp.UpdateListInput) error {
+func (s *TodoListService) Update(userID, id int, input *todoapp.UpdateListInput) error {
 	if err := input.Validate(); err != nil {
 		return err
 	}
-	return s.repo.Update(userId, id, input)
+	return s.repo.Update(userID, id, input)
 }
 
-func (s *TodoListService) Delete(userId, id int) error {
-	return s.repo.Delete(userId, id)
+func (s *TodoListService) Delete(userID, id int) error {
+	return s.repo.Delete(userID, id)
 }
