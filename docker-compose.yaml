@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  todo-app:
+  app:
     build: ./
     command: sh -c "./wait-for-postgres.sh db; ./todo-app"
     ports:
