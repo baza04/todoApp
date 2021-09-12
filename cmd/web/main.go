@@ -28,8 +28,28 @@ import (
 // @in header
 // @name Authorization
 
+type config struct {
+	port string
+	DB
+}
+
+type DB struct {
+	Username string
+	password string
+	Host     string
+	Port     string
+	DBname   string
+	Sslmode  string
+}
+
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
+
+	// conf, err := initConfig()
+	// if err != nil {
+	// 	logrus.Fatalf("error initializating configs: %s", err.Error())
+	// }
+	// logrus.Fatalf("conf: %#v\n", conf)
 
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error initializating configs: %s", err.Error())
@@ -43,7 +63,14 @@ func main() {
 		logrus.Fatalf("error cannot initializing database password")
 	}
 
+	// fmt.Printf("%#v\n", conf)
 	db, err := repository.NewPostgresDB(repository.Config{
+		// Host:     conf.DB.Host,
+		// Port:     conf.DB.Port,
+		// Username: conf.DB.Username,
+		// DBName:   conf.DB.DBname,
+		// SSLMode:  conf.DB.Sslmode,
+		// Password: conf.DB.password,
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
@@ -62,6 +89,7 @@ func main() {
 	srv := new(todoapp.Server)
 	go func() {
 		if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
+			// if err := srv.Run(conf.port, handler.InitRoutes()); err != nil {
 			logrus.Fatalf("error occured while running http server: %s", err.Error())
 		}
 	}()
@@ -80,9 +108,32 @@ func main() {
 	}
 }
 
+// func initConfig() (*config, error) {
 func initConfig() error {
-	viper.AddConfigPath("configs")
+	// viper.SetConfigType("yml")
 	viper.SetConfigName("config")
+	viper.AddConfigPath("./configs")
 
 	return viper.ReadInConfig()
+	// if err := viper.ReadInConfig(); err != nil {
+	// 	return nil, err
+	// }
+
+	// // conf := new(config)
+	// conf := config{}
+	// if err := viper.Unmarshal(&conf); err != nil {
+	// 	return nil, err
+	// }
+
+	// if err := godotenv.Load(); err != nil {
+	// 	return nil, err
+	// }
+
+	// if value, ok := os.LookupEnv("DB_PASSWORD"); !ok || value == "" {
+	// 	return nil, errors.New("error cannot initializing database password")
+	// } else {
+	// 	conf.DB.password = value
+	// }
+
+	// return &conf, nil
 }

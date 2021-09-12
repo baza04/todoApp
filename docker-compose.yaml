@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build: ./
+    build: ./ --no-cache
     command: sh -c "./wait-for-postgres.sh db; ./todo-app"
     ports:
       - 8001:8001
