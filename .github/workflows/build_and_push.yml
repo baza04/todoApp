@@ -1,0 +1,21 @@
+name: Docker Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: docker login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASS
+    - name: docker build
+      run: |
+        docker build . -t baza04/todo-app
+    - name: docker push
+      run: |
+        docker push baza04/todo-app
