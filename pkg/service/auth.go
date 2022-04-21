@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
-	jwt "github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt"
 	"time"
 
 	todoapp "github.com/baza04/todoApp"
