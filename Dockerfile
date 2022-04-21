@@ -1,11 +1,12 @@
-FROM golang:1.14-buster AS build
+FROM golang:1.18-buster AS build
 
 ENV GOPATH=/
 WORKDIR /src/
 COPY ./ /src/
 
 # build go app
-RUN go mod download; CGO_ENABLED=0 go build -o /todo-app ./cmd/web/main.go
+RUN go mod download
+RUN CGO_ENABLED=0 go build -o /todo-app ./cmd/web/main.go
 
 
 FROM alpine:latest
