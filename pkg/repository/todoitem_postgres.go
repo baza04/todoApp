@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	todoapp "github.com/baza04/todoApp"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
+
+	todoapp "github.com/baza04/todoApp"
 )
 
 type TodoItemPostgres struct {
@@ -30,14 +31,12 @@ func (r *TodoItemPostgres) Create(userID, listID int, item todoapp.TodoItem) (in
 
 	row := tx.QueryRow(createItemQuery, item.Title, item.Description)
 	if err = row.Scan(&itemID); err != nil {
-		tx.Rollback()
-		return 0, err
+		return 0, fmt.Errorf("scan ID after insert todo item failed: %w", tx.Rollback())
 	}
 
 	createListItemsQuery := fmt.Sprintf("INSERT INTO %s (list_id, item_id) VALUES ($1, $2)", listsItemsTable)
 	if _, err = tx.Exec(createListItemsQuery, listID, itemID); err != nil {
-		tx.Rollback()
-		return 0, err
+		return 0, fmt.Errorf("todo item list insert executing failed: %w", tx.Rollback())
 	}
 
 	return itemID, tx.Commit()
@@ -96,6 +95,7 @@ func (r *TodoItemPostgres) Update(userID, itemID int, input todoapp.UpdateItemIn
 	logrus.Debugf("args: %s", args)
 
 	_, err := r.db.Exec(query, args...)
+
 	return err
 }
 

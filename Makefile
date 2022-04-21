@@ -1,10 +1,16 @@
 .SILENT:
 
+build:
+	go build -o ./bin/app cmd/web/main.go
+
+#run: build
+#	./bin/app
+
 run:
 	docker-compose up --remove-orphans --build app
 
-# run-postgres:
-# 	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
+ run-postgres:
+ 	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
 
 # restart-postgres:
 # 	docker restart todo-db
@@ -49,6 +55,9 @@ html-cover: test-cover
 # 	go vet $(pkgs)
 # 	staticcheck $(pkgs)
 # 	errcheck $(pkgs)
+
+lint:
+	golangci-lint run -c .golangci.yml
 
 gci-lint:
 	golangci-lint run --fix --disable-all -E govet,gosimple,unused,stylecheck,unparam,staticcheck,errcheck,gofmt,deadcode
