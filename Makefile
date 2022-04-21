@@ -1,10 +1,16 @@
 .SILENT:
 
+build:
+	go build -o ./bin/app cmd/web/main.go
+
+#run: build
+#	./bin/app
+
 run:
 	docker-compose up --remove-orphans --build app
 
-# run-postgres:
-# 	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
+ run-postgres:
+ 	docker run --name=todo-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d postgres
 
 # restart-postgres:
 # 	docker restart todo-db
@@ -27,19 +33,20 @@ migrate-down:
 init-swagger:
 	swag init -g cmd/web/main.go
 
-test:
-	go test ./...
+test-cover:
+	go test -coverprofile=coverage.out ./... -v -coverpkg=./...
 
-test-coverage:
-	go test -cover
+html-cover: test-cover
+	go tool cover -html=coverage.out
 
 # build:
 # 	go build -o ./bin/app ./cmd/web/main.go
 # run: build
 # 	./bin/app
+
 # pkgs = $(shell go list ./... | fgrep -v /vendor)
 
-# lint:
+# get-linters: # without golangci-linter
 # 	go get golang.org/x/lint/golint
 # 	go get honnef.co/go/tools/cmd/staticcheck
 # 	go get github.com/kisielk/errcheck
@@ -49,5 +56,8 @@ test-coverage:
 # 	staticcheck $(pkgs)
 # 	errcheck $(pkgs)
 
+lint:
+	golangci-lint run -c .golangci.yml
+
 gci-lint:
-	golangci-lint run --disable-all -E golint,govet,staticcheck,errcheck
+	golangci-lint run --fix --disable-all -E govet,gosimple,unused,stylecheck,unparam,staticcheck,errcheck,gofmt,deadcode

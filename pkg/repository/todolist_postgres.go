@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	todoapp "github.com/baza04/todoApp"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
+
+	todoapp "github.com/baza04/todoApp"
 )
 
 type TodoListPostgres struct {
@@ -28,14 +29,12 @@ func (r *TodoListPostgres) Create(userID int, list todoapp.TodoList) (int, error
 
 	row := tx.QueryRow(createListQuery, list.Title, list.Description)
 	if err = row.Scan(&id); err != nil {
-		tx.Rollback()
-		return 0, err
+		return 0, fmt.Errorf("scan ID after insert todo list failed: %w", tx.Rollback())
 	}
 
 	createUsersListsQuery := fmt.Sprintf("INSERT INTO %s (user_id, list_id) VALUES ($1, $2)", usersListsTable)
 	if _, err = tx.Exec(createUsersListsQuery, userID, id); err != nil {
-		tx.Rollback()
-		return 0, err
+		return 0, fmt.Errorf("users list insert executing failed: %w", tx.Rollback())
 	}
 
 	return id, tx.Commit()

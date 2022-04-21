@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	todoapp "github.com/baza04/todoApp"
 	"github.com/gin-gonic/gin"
+
+	todoapp "github.com/baza04/todoApp"
 )
 
 // @Summary Create TODO Item
@@ -141,25 +142,31 @@ func (h *Handler) getItemByID(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /api/items/{id} [put]
 func (h *Handler) updateItem(c *gin.Context) {
-	userID, err := getUserID(c)
-	if err != nil {
+	var (
+		userID, itemID int
+		err            error
+	)
+
+	if userID, err = getUserID(c); err != nil {
 		return
 	}
 
-	itemID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if itemID, err = strconv.Atoi(c.Param("id")); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	var input todoapp.UpdateItemInput
-	if err := c.BindJSON(&input); err != nil {
+	if err = c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	if err = h.services.TodoItem.Update(userID, itemID, input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -182,19 +189,24 @@ func (h *Handler) updateItem(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /api/items/{id} [delete]
 func (h *Handler) deleteItem(c *gin.Context) {
-	userID, err := getUserID(c)
-	if err != nil {
+	var (
+		userID, itemID int
+		err            error
+	)
+
+	if userID, err = getUserID(c); err != nil {
 		return
 	}
 
-	itemID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if itemID, err = strconv.Atoi(c.Param("id")); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	if err = h.services.TodoItem.Delete(userID, itemID); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

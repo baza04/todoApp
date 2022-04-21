@@ -4,11 +4,11 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
+	jwt "github.com/golang-jwt/jwt/v4"
 	"time"
 
 	todoapp "github.com/baza04/todoApp"
 	"github.com/baza04/todoApp/pkg/repository"
-	"github.com/dgrijalva/jwt-go"
 )
 
 const (
@@ -49,11 +49,13 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		},
 		user.ID,
 	})
+
 	return token.SignedString([]byte(signingKey))
 }
 
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
-	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+	claims := new(tokenClaims)
+	token, err := jwt.ParseWithClaims(accessToken, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
