@@ -61,3 +61,7 @@ lint:
 
 gci-lint:
 	golangci-lint run --fix --disable-all -E govet,gosimple,unused,stylecheck,unparam,staticcheck,errcheck,gofmt,deadcode
+
+mock-gen:
+	mockgen -source=./pkg/repository/repository.go -destination=./pkg/repository/repo_mock.go --package=repository
+	mockgen -source=./pkg/service/service.go -destination=./pkg/service/service_mock.go --package=service
