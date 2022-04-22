@@ -1,5 +1,11 @@
 # todoApp on Golang
 
+## Run app in docker compose
+
+```bash
+docker compose up -d
+```
+
 ## Run app
 ```bash
 make run
