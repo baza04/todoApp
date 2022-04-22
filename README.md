@@ -25,3 +25,8 @@ make migrate-up
 ```bash
 make migrate-down
 ```
+
+## Generate mocks
+```bash
+make mock-gen
+```
